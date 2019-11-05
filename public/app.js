@@ -1,71 +1,163 @@
+/* eslint-disable no-unused-vars */
+$(function() {
+  // route to save article
+  $(".save-article").on("click", function(event) {
+    event.preventDefault();
 
-$.getJSON("/articles", function(data) {
+    // Save the id from the p tag
+    var thisId = $(this).data("id");
+    console.log(thisId);
 
-  for (var i = 0; i < data.length; i++) {
-    
-    $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-  }
-});
-
-
-
-$(document).on("click", "p", function() {
-
-  $("#notes").empty();
-
-  var thisId = $(this).attr("data-id");
-
- 
-  $.ajax({
-    method: "GET",
-    url: "/articles/" + thisId
-  })
-  
-    .then(function(data) {
-      console.log(data);
-\
-      $("#notes").append("<h2>" + data.title + "</h2>");
-  
-      $("#notes").append("<input id='titleinput' name='title' >");
-   
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
-     
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
-
-
-      if (data.note) {
-
-        $("#titleinput").val(data.note.title);
- 
-        $("#bodyinput").val(data.note.body);
+    // // Now make an ajax call to save the article
+    $.ajax({
+      method: "POST",
+      url: "/articles/" + thisId,
+      data: {
+        isSaved: true
       }
+    })
+      // With that done
+      .then(function(data) {
+        // Log the response
+        console.log(data);
+      });
+  });
+
+  // route to save note
+  $(".add-note").on("click", function(event) {
+    event.preventDefault();
+
+    var thisId = $(this).data("id");
+
+    console.log("this is good", thisId);
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // Display the modal
+    modal.style.display = "block";
+    $.ajax({
+      method: "GET",
+      url: "/notes/" + thisId
+    }).then(function(data) {
+      console.log("article", data);
+      for (var i = 0; i < data.length; i++) {
+        // Display the information on the page
+        $(".saved-notes").append(
+          "<p>" +
+            data[i].body +
+            "<button class='delete-note' data-id='" +
+            data[i]._id +
+            "'>x</button></p>"
+        );
+      }
+      //space
     });
-});
 
-
-$(document).on("click", "#savenote", function() {
-
-  var thisId = $(this).attr("data-id");
-
-
-  $.ajax({
-    method: "POST",
-    url: "/articles/" + thisId,
-    data: {
-  
-      title: $("#titleinput").val(),
-      
-      body: $("#bodyinput").val()
-    }
-  })
-
-    .then(function(data) {
-
-      console.log(data);
-     
-      $("#notes").empty();
+    $(document).on("click", ".delete-note", function(event) {
+      event.preventDefault();
+      var delId = $(this).data("id");
+      console.log("this is", delId);
+      $.ajax("/notes/" + delId, {
+        type: "DELETE"
+      }).then(function() {
+        console.log("deleted successfully");
+        $.ajax({
+          method: "GET",
+          url: "/notes/" + thisId
+        }).then(function(data) {
+          console.log(data);
+          $(".saved-notes").empty();
+          for (var i = 0; i < data.length; i++) {
+            // Display the information on the page
+            $(".saved-notes").append(
+              "<p>" +
+                data[i].body +
+                "<button class='delete-note' data-id='" +
+                data[i]._id +
+                "'>x</button></p>"
+            );
+          }
+        });
+      });
     });
 
-  $("#titleinput").val("");
-  $("#bodyinput").val("");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+      $(".saved-notes").empty();
+      location.reload();
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+        $(".saved-notes").empty();
+        location.reload();
+      }
+    };
+
+    $(".save-note").on("click", function(_event) {
+      var newNote = $(".modal-text")
+        .val()
+        .trim();
+      console.log(newNote);
+      $(".modal-text").val("");
+
+      // Now make an ajax call to save the note
+      $.ajax({
+        method: "POST",
+        url: "/notes/" + thisId,
+        data: {
+          body: newNote,
+          article: thisId
+        }
+      }).then(function(data) {
+        // Log the response
+        console.log("line 123", data);
+        $.ajax({
+          method: "GET",
+          url: "/notes/" + thisId
+        }).then(function(data) {
+          console.log(data);
+          $(".saved-notes").empty();
+          for (var i = 0; i < data.length; i++) {
+            // Display the information on the page
+            $(".saved-notes").append(
+              "<p>" +
+                data[i].body +
+                "<button class='delete-note' data-id='" +
+                data[i]._id +
+                "'>x</button></p>"
+            );
+          }
+        });
+      });
+    });
+  });
+
+  $("#delete-articles").on("click", function(event) {
+    //alert("delete")
+    event.preventDefault();
+    $.ajax("/articles", {
+      method: "DELETE"
+    }).then(function(data) {
+      console.log("all articles deleted.", data);
+    });
+    location.reload();
+  });
+
+  $("#scrape-articles").on("click", function(event) {
+    event.preventDefault();
+    //alert("scrape button is working :)");
+    $.ajax("/scrape", {
+      method: "GET"
+    }).then(function(data) {
+      console.log("new articles scraped", data);
+      location.reload();
+    });
+  });
 });
