@@ -26,7 +26,8 @@ require("./routes/routes")(app);
 
 // Connect to the mongoose database
 var MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+  process.env.MONGODB_URI ||
+  "mongodb://<user1>:<password1>@ds241298.mlab.com:41298/heroku_30h81wq6";
 mongoose.connect(MONGODB_URI);
 
 app.listen(PORT, function() {
