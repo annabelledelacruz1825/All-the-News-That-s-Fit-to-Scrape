@@ -29,7 +29,8 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 mongoose.connect(
   process.env.MONGODB_URI ||
-    "mongodb://<user1>:<password1>@ds147377.mlab.com:47377/heroku_9npktxqw",
+    "mongodb://<dbuser>:<dbpassword>@ds033469.mlab.com:33469/heroku_glps8wt5",
+  // calmpeak
   {
     useMongoClient: true
   }
