@@ -1,23 +1,30 @@
 # All-the-News-That-s-Fit-to-Scrape
 
+All the News That's Fit to Scrape is an application that lets users scrape news articles from NPR.com. Users can then view and leave comments on saved articles. This app uses Cheerio to scrape news from NPR and stores them in MongoDB using Mongoose. 
 
-web app that lets users view and leave comments on the latest news scraped from another site.
+Technologies
+Frontend	Backend
+HTML	Nodejs
+CSS (SASS)	Express
+Javascript (jQuery)	MongoDB (Mongoose)
+Materialize	Cheerio (Web Scrapper)
+Handlebars (Templating Engine)	
+Deployed on: Heroku
 
-technologies used: axios cheerio express express-handlebars mongoose materialize
+
+How to use
+
+Click on the "Scrape" Add Icon at the Upper Right Hand Corner to Scrape News Articles from NPR News.
+
+Click on Add Symbol on the Individual Articles to Store the Article in MongoDB.
+
+Click on "Saved Articles" to bring up a List of Saved Articles.
+
+Click on the Article to Bring Up a Pop up Modal for Viewing and Submitting Comments Pertaining to the Article.
+
+Click on the "Trash" Icon / Delete to Delete the Article / Comment.
 
 
 
-
-Run npm init. When that's finished, install and save these npm packages:
-
-express
-
-express-handlebars
-
-mongoose
-
-cheerio
-
-axios
 
 
